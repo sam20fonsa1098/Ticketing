@@ -2,9 +2,13 @@ name: tickets_test
 
 on:
   push:
+    paths:
+      - 'tickets/**'
     branches:
       - master
   pull_request:
+    paths:
+      - 'tickets/**'
     branches:
       - master
   

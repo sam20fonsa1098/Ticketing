@@ -2,9 +2,13 @@ name: orders_test
 
 on:
   push:
+    paths:
+      - 'orders/**'
     branches:
       - master
   pull_request:
+    paths:
+      - 'orders/**'
     branches:
       - master
   

@@ -2,9 +2,13 @@ name: payments_test
 
 on:
   push:
+    paths:
+      - 'payments/**'
     branches:
       - master
   pull_request:
+    paths:
+      - 'payments/**'
     branches:
       - master
   
