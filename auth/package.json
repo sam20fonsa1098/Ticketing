@@ -6,6 +6,7 @@
   "scripts": {
     "dev": "ts-node-dev --inspect --transpile-only --ignore-watch node_modules src/infra/express/index.ts",
     "test": "NODE_ENV=test JWT_SECRET=123456789 jest --runInBand --detectOpenHandles",
+    "test:ci": "NODE_ENV=test JWT_SECRET=123456789 jest",
     "typeorm": "ts-node-dev ./node_modules/typeorm/cli.js"
   },
   "devDependencies": {
