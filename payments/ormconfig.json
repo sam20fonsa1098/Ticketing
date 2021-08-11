@@ -1,0 +1,18 @@
+{ 
+  "type": "mongodb", 
+  "host": "ticketing-payments-mongo-srv", 
+  "port": 27017, 
+  "database": "payments", 
+  "synchronize": true, 
+  "logging": false, 
+  "useUnifiedTopology": true,
+  "entities": [ 
+     "src/infra/typeorm/entities/*.ts" 
+  ], 
+  "migrations": [ 
+    "src/infra/typeorm/migrations/*.ts" 
+  ], 
+  "cli": { 
+     "entitiesDir": "src/infra/typeorm/entities", "migrationsDir": "src/infra/typeorm/migrations"
+  } 
+}
