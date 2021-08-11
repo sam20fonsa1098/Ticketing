@@ -1,4 +1,4 @@
-name: autn_tests
+name: auth_tests
 
 on:
   push:
