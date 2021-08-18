@@ -1,4 +1,4 @@
-import { IUserTokenDTO } from "../../../dtos/IUserTokenDTO";
+import { IUserTokenDTO } from '../../../dtos/IUserTokenDTO';
 
 export interface IAccessTokenProvider {
   generateAccessToken(data: IUserTokenDTO): Promise<string>;

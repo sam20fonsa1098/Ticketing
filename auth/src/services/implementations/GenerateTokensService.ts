@@ -1,12 +1,15 @@
 import { injectable, inject } from 'tsyringe';
-import { IUserTokenDTO } from '../../dtos/IUserTokenDTO';
 
-import { IAccessTokenProvider } from '../../providers/TokenProvider/models/IAccessTokensProvider';
+import { IUserTokenDTO } from '@dtos/IUserTokenDTO';
+import { IAccessTokenProvider } from '@providers/TokenProvider/models/IAccessTokensProvider';
+import { IService } from '@services/models/IService';
 
-import { IResponse } from './interfaces';
+interface IResponse {
+  token: string;
+}
 
 @injectable()
-export class GenerateTokensService {
+export class GenerateTokensService implements IService {
   constructor(
     @inject('AccessTokenProvider')
     private accessTokenProvider: IAccessTokenProvider,

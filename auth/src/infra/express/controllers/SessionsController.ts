@@ -1,20 +1,39 @@
-import { container } from 'tsyringe';
-import { Request, Response } from 'express';
 import { classToClass } from 'class-transformer';
-import { AuthenticateUserService } from '../../../services/AuthenticateUser';
+import { Request, Response } from 'express';
+import { container } from 'tsyringe';
+import { CheckUserExistsValidator } from 'validators/implementations/CheckUserExistsValidator';
+
+import { AuthenticateUserService } from '@services/implementations/AuthenticateUserService';
+import { GenerateTokensService } from '@services/implementations/GenerateTokensService';
 
 class SessionsController {
-  public create = async (request: Request, response: Response): Promise<Response> => {
-    const authenticateUserService = container.resolve(AuthenticateUserService);
-    const data = await authenticateUserService.execute(request.body);
-    response.cookie('jwt', data.token)
-    return response.status(200).json(classToClass(data.user));
+  private authenticateUserService: AuthenticateUserService;
+  constructor() {
+    this.authenticateUserService = container.resolve(AuthenticateUserService);
+    this.authenticateUserService.setObservers([
+      container.resolve(GenerateTokensService),
+    ]);
+    this.authenticateUserService.setValidators([
+      new CheckUserExistsValidator(),
+    ]);
   }
 
-  public delete = async (request: Request, response: Response): Promise<Response> => {
-    response.cookie('jwt', undefined)
+  public create = async (
+    request: Request,
+    response: Response,
+  ): Promise<Response> => {
+    const data = await this.authenticateUserService.execute(request.body);
+    response.cookie('jwt', data.token);
+    return response.status(200).json(classToClass(data.user));
+  };
+
+  public delete = async (
+    request: Request,
+    response: Response,
+  ): Promise<Response> => {
+    response.cookie('jwt', undefined);
     return response.send({});
-  }
+  };
 }
 
 export { SessionsController };

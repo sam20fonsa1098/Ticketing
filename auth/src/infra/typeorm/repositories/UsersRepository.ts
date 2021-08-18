@@ -1,29 +1,30 @@
-import { getMongoRepository, MongoRepository, ObjectID } from 'typeorm';
-import { IUserDTO } from '../../../dtos/IUserDTO';
-import { IUsersRepository } from '../../../repositories/models/IUsersRepository';
-import { User } from '../entities/User';
+import { getRepository, Repository } from 'typeorm';
+
+import { ICreateUserDTO } from '@dtos/ICreateUserDTO';
+import { User } from '@infra/typeorm/entities/User';
+import { IUsersRepository } from '@repositories/models/IUsersRepository';
 
 class UsersRepository implements IUsersRepository {
-  private repository: MongoRepository<User>;
+  private repository: Repository<User>;
   constructor() {
-    this.repository = getMongoRepository(User);
+    this.repository = getRepository(User);
   }
 
-  public createUser = async (user: IUserDTO): Promise<User> => {
-    const newUser = this.repository.create(user);
-    await this.repository.save(newUser);
-    return newUser;
-  }
+  public createUser = async (data: ICreateUserDTO): Promise<User> => {
+    const user = this.repository.create(data);
+    await this.repository.save(user);
+    return user;
+  };
 
   public findUserByEmail = async (email: string): Promise<User | undefined> => {
     const findUser = await this.repository.findOne({ email });
     return findUser;
-  }
+  };
 
   public findUserById = async (id: string): Promise<User | undefined> => {
     const findUser = await this.repository.findOne(id);
     return findUser;
-  }
+  };
 }
 
 export { UsersRepository };

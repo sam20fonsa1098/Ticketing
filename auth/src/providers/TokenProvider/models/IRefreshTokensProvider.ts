@@ -1,3 +1,6 @@
 export interface IRefreshTokenProvider {
-  generateRefreshToken(): Promise<{refreshToken: string, expiresRefreshToken: number}>;
+  generateRefreshToken(): Promise<{
+    refreshToken: string;
+    expiresRefreshToken: number;
+  }>;
 }

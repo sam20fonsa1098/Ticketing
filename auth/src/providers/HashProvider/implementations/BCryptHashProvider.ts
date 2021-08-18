@@ -1,4 +1,7 @@
 import { hash, compare } from 'bcryptjs';
+
+import { UnauthorizedError } from '@sam20fonsa1098tickets/common';
+
 import { IHashProvider } from '../models/IHashProvider';
 
 export class BCryptHashProvider implements IHashProvider {
@@ -6,7 +9,10 @@ export class BCryptHashProvider implements IHashProvider {
     return hash(payload, 8);
   }
 
-  public async compareHash(payload: string, hashed: string): Promise<boolean> {
-    return compare(payload, hashed);
+  public async compareHash(payload: string, hashed: string): Promise<void> {
+    const passwordMatched = compare(payload, hashed);
+    if (!passwordMatched) {
+      throw new UnauthorizedError('Incorrect email/password combination');
+    }
   }
 }

@@ -1,11 +1,14 @@
 import 'dotenv/config';
-import "reflect-metadata"; 
+import 'reflect-metadata';
 import 'express-async-errors';
-import { errorHandler } from '@sam20fonsa1098tickets/common';
-import createConnection from '../typeorm';
-import '../../providers';
 import express from 'express';
+
+import createConnection from '@infra/typeorm';
+import { errorHandler } from '@sam20fonsa1098tickets/common';
+
 import { router } from './routes';
+
+import '@providers';
 
 createConnection();
 

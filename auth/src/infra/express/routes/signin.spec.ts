@@ -1,19 +1,19 @@
-import request from "supertest";
-import { Connection } from "typeorm";
+import request from 'supertest';
+import { Connection } from 'typeorm';
 
-import { app } from "../app";
-import createConnection from "../../typeorm";
+import createConnection from '../../typeorm';
+import { app } from '../app';
 
 let connection: Connection;
-let data: { email: string, password: string };
+let data: { email: string; password: string };
 
 describe('SignInRouter', () => {
-  beforeAll(async() => {
+  beforeAll(async () => {
     connection = await createConnection();
     data = {
-      email: "samfonsa12345@gmail.com",
-      password: "abc123"
-    }
+      email: 'samfonsa12345@gmail.com',
+      password: 'abc123',
+    };
   });
 
   it('should not be able to signin an invalid user', async () => {
@@ -22,7 +22,9 @@ describe('SignInRouter', () => {
   });
 
   it('should not be able to signin a valid user but with wrong password', async () => {
-    const response = await request(app).post('/api/users/signin').send({...data, password:"wrongPassword"});
+    const response = await request(app)
+      .post('/api/users/signin')
+      .send({ ...data, password: 'wrongPassword' });
     expect(response.statusCode).toEqual(401);
   });
 
@@ -37,4 +39,4 @@ describe('SignInRouter', () => {
     await connection.dropDatabase();
     await connection.close();
   });
-})
+});

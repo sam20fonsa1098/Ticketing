@@ -1,6 +1,9 @@
 import { container } from 'tsyringe';
 
-import { IAccessTokenProvider } from './models/IAccessTokensProvider';
 import { JWTTokenProvider } from './implementations/JWTTokenProvider';
+import { IAccessTokenProvider } from './models/IAccessTokensProvider';
 
-container.registerSingleton<IAccessTokenProvider>('AccessTokenProvider', JWTTokenProvider);
+container.registerSingleton<IAccessTokenProvider>(
+  'AccessTokenProvider',
+  JWTTokenProvider,
+);

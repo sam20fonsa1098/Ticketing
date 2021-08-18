@@ -1,6 +1,7 @@
 import { Router } from 'express';
-import { searchUserRouter } from './searchUser.routes';
+
 import { notFoundRouter } from './notFound.routes';
+import { searchUserRouter } from './searchUser.routes';
 import { signinRouter } from './signin.routes';
 import { signoutRouter } from './signout.routes';
 import { signupRouter } from './signup.routes';
