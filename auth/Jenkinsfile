@@ -1,61 +1,56 @@
 pipeline {
   agent any
-
   stages {
-
-      stage('Docker Build Image') {
-        steps {
-          script {
-            sh "docker build -t sam20fonsa1098/ticketing-auth ."
+    stage('Docker Build Image') {
+      steps {
+        script {
+          sh "docker build -t sam20fonsa1098/ticketing-auth ."
+        }
+      }
+    }
+    stage('Docker Push Image') {
+      steps {
+        script {
+            sh "docker push sam20fonsa1098/ticketing-auth"
           }
         }
       }
-
-      stage('Docker Push Image') {
-        steps {
-          script {
-              sh "docker push sam20fonsa1098/ticketing-auth"
-            }
-          }
-        }
-      }
-
-      stage('Deploy Postgres in Kubernetes') {
-          agent {
-            kubernetes {
-              yaml '''
-                apiVersion: apps/v1
-                kind: Deployment
+    }
+    stage('Deploy Postgres in Kubernetes') {
+      agent {
+        kubernetes {
+          yaml '''
+            apiVersion: apps/v1
+            kind: Deployment
+            metadata:
+              name: ticketing-auth-depl
+            spec:
+              replicas: 1
+              selector:
+                matchLabels:
+                  app: ticketing-auth
+              template:
                 metadata:
-                  name: ticketing-auth-depl
+                  labels:
+                    app: ticketing-auth
                 spec:
-                  replicas: 1
-                  selector:
-                    matchLabels:
-                      app: ticketing-auth
-                  template:
-                    metadata:
-                      labels:
-                        app: ticketing-auth
-                    spec:
-                      containers:
-                        - name: ticketing-auth
-                          image: sam20fonsa1098/ticketing-auth
-                          env:
-                            - name: JWT_SECRET
-                              valueFrom:
-                                secretKeyRef:
-                                  name: jwt-secret
-                                  key: JWT_SECRET
-                '''
-            }
-          }
-
-          steps {
-             container('ticketing-auth') {
-              sh 'yarn test'
-            }
-          }
+                  containers:
+                    - name: ticketing-auth
+                      image: sam20fonsa1098/ticketing-auth
+                      env:
+                        - name: JWT_SECRET
+                          valueFrom:
+                            secretKeyRef:
+                              name: jwt-secret
+                              key: JWT_SECRET
+            '''
+        }
       }
+      steps {
+          container('ticketing-auth') {
+          sh 'yarn test'
+        }
+      }
+    }
   }
 }
