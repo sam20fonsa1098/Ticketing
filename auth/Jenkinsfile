@@ -9,12 +9,11 @@ pipeline {
         }
       }
     }
-    
+
     stage('Docker Push Image') {
       steps {
         script {
-            sh "docker push sam20fonsa1098/ticketing-auth"
-          }
+          sh "docker push sam20fonsa1098/ticketing-auth"
         }
       }
     }
