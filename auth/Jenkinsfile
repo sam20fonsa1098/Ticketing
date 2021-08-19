@@ -3,33 +3,138 @@ pipeline {
     kubernetes {
       yaml '''
         apiVersion: v1
-        kind: Pod
+        kind: ConfigMap
+        metadata:
+          name: ticketing-auth-pg-config
+          labels:
+            app: ticketing-auth-pg
+        data:
+          POSTGRES_DB: auth
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+        ---
+        apiVersion: v1
+        kind: PersistentVolumeClaim
+        metadata:
+          name: ticketing-auth-pg-pvc
+          labels:
+            app: ticketing-auth-pg
         spec:
-          containers:
-          - name: maven
-            image: maven:alpine
-            command:
-            - cat
-            tty: true
-          - name: node
-            image: node:16-alpine3.12
-            command:
-            - cat
-            tty: true
+          storageClassName: manual
+          accessModes:
+            - ReadWriteOnce
+          resources:
+            requests:
+              storage: 1Gi
+        ---
+        apiVersion: v1
+        kind: PersistentVolume
+        metadata:
+          name: ticketing-auth-pg-storage
+          labels:
+            type: local
+            app: ticketing-auth-pg
+        spec:
+          storageClassName: manual
+          capacity:
+            storage: 1Gi
+          accessModes:
+            - ReadWriteOnce
+          hostPath:
+            path: "/mnt/minikube/directory/structure/"
+            type: DirectoryOrCreate
+        ---
+        apiVersion: apps/v1
+        kind: Deployment
+        metadata:
+          name: ticketing-auth-pg-depl
+        spec:
+          replicas: 1
+          selector:
+            matchLabels:
+              app: ticketing-auth-pg
+          template:
+            metadata:
+              labels:
+                app: ticketing-auth-pg
+            spec:
+              containers:
+                - name: ticketing-auth-pg
+                  image: postgres
+                  envFrom:
+                    - configMapRef:
+                        name: ticketing-auth-pg-config
+                  volumeMounts:
+                    - mountPath: /var/lib/postgresql/data
+                      name: postgresdb
+              volumes:
+                - name: postgresdb
+                  persistentVolumeClaim:
+                    claimName: ticketing-auth-pg-pvc
+        ---
+        apiVersion: v1
+        kind: Service
+        metadata:
+          name: ticketing-auth-pg-srv
+        spec:
+          selector:
+            app: ticketing-auth-pg
+          ports:
+            - name: ticketing-auth-pg
+              protocol: TCP
+              port: 5432
+              targetPort: 5432
+        ---
+        apiVersion: apps/v1
+        kind: Deployment
+        metadata:
+          name: ticketing-auth-depl
+        spec:
+          replicas: 1
+          selector:
+            matchLabels:
+              app: ticketing-auth
+          template:
+            metadata:
+              labels:
+                app: ticketing-auth
+            spec:
+              containers:
+                - name: ticketing-auth
+                  image: sam20fonsa1098/ticketing-auth
+                  env:
+                    - name: JWT_SECRET
+                      valueFrom:
+                        secretKeyRef:
+                          name: jwt-secret
+                          key: JWT_SECRET
+        ---
+        apiVersion: v1
+        kind: Service
+        metadata:
+          name: ticketing-auth-srv
+        spec:
+          selector:
+            app: ticketing-auth
+          ports:
+            - name: ticketing-auth
+              protocol: TCP
+              port: 3333
+              targetPort: 3333
         '''
     }
   }
   stages {
     stage('Run migrations') {
       steps {
-        container('maven') {
+        container('ticketing-auth') {
           sh "yarn typeorm migration:run"
         }
       }
     }
-    stage('Run maven') {
+    stage('Run tests') {
       steps {
-        container('maven') {
+        container('ticketing-auth') {
           sh 'yarn test'
         }
       }
