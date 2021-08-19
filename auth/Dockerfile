@@ -5,6 +5,7 @@ WORKDIR /app
 COPY package.json .
 
 RUN yarn install
+RUN yarn cache clean
 
 COPY . .
 
