@@ -6,6 +6,7 @@ import { IUsersRepository } from '@repositories/models/IUsersRepository';
 
 class UsersRepository implements IUsersRepository {
   private repository: Repository<User>;
+
   constructor() {
     this.repository = getRepository(User);
   }

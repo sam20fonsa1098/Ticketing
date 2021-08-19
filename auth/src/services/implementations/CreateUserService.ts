@@ -1,12 +1,13 @@
 import { injectable, inject } from 'tsyringe';
-import { IValidator } from 'validators/models/IValidator';
 
 import { ICreateUserDTO } from '@dtos/ICreateUserDTO';
 import { IHashProvider } from '@providers/HashProvider/models/IHashProvider';
 import { IUsersRepository } from '@repositories/models/IUsersRepository';
+import { IService } from '@services/models/IService';
+import { IValidator } from '@validators/models/IValidator';
 
 @injectable()
-class CreatUserService {
+class CreatUserService implements IService {
   private validators: Array<IValidator>;
 
   constructor(
@@ -14,7 +15,7 @@ class CreatUserService {
     @inject('HashProvider') private hashProvider: IHashProvider,
   ) {}
 
-  public setValidators(validators: Array<IValidator>) {
+  public setValidators(validators: Array<IValidator>): void {
     this.validators = validators;
   }
 

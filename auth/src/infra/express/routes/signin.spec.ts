@@ -10,6 +10,7 @@ let data: { email: string; password: string };
 describe('SignInRouter', () => {
   beforeAll(async () => {
     connection = await createConnection();
+    await connection.runMigrations();
     data = {
       email: 'samfonsa12345@gmail.com',
       password: 'abc123',
@@ -36,7 +37,9 @@ describe('SignInRouter', () => {
   });
 
   afterAll(async () => {
-    await connection.dropDatabase();
-    await connection.close();
+    if (connection) {
+      await connection.dropDatabase();
+      await connection.close();
+    }
   });
 });

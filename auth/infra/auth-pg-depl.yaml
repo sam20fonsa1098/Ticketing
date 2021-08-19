@@ -1,0 +1,82 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: ticketing-auth-pg-config
+  labels:
+    app: ticketing-auth-pg
+data:
+  POSTGRES_DB: auth
+  POSTGRES_USER: postgres
+  POSTGRES_PASSWORD: postgres
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: ticketing-auth-pg-pvc
+  labels:
+    app: ticketing-auth-pg
+spec:
+  storageClassName: manual
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 1Gi
+---
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: ticketing-auth-pg-storage
+  labels:
+    type: local
+    app: ticketing-auth-pg
+spec:
+  storageClassName: manual
+  capacity:
+    storage: 1Gi
+  accessModes:
+    - ReadWriteOnce
+  hostPath:
+    path: "/mnt/minikube/directory/structure/"
+    type: DirectoryOrCreate
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ticketing-auth-pg-depl
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: ticketing-auth-pg
+  template:
+    metadata:
+      labels:
+        app: ticketing-auth-pg
+    spec:
+      containers:
+        - name: ticketing-auth-pg
+          image: postgres
+          envFrom:
+            - configMapRef:
+                name: ticketing-auth-pg-config
+          volumeMounts:
+            - mountPath: /var/lib/postgresql/data
+              name: postgresdb
+      volumes:
+        - name: postgresdb
+          persistentVolumeClaim:
+            claimName: ticketing-auth-pg-pvc
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: ticketing-auth-pg-srv
+spec:
+  selector:
+    app: ticketing-auth-pg
+  ports:
+    - name: ticketing-auth-pg
+      protocol: TCP
+      port: 5432
+      targetPort: 5432

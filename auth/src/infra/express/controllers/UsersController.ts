@@ -1,8 +1,8 @@
 import { Request, Response } from 'express';
 import { container } from 'tsyringe';
-import { UserAlreadyExistsValidator } from 'validators/implementations/UserAlreadyExistsValidator';
 
 import { CreatUserService } from '@services/implementations/CreateUserService';
+import { UserAlreadyExistsValidator } from '@validators/implementations/UserAlreadyExistsValidator';
 
 class UsersController {
   public create = async (

@@ -9,6 +9,7 @@ let connection: Connection;
 describe('SignUpRouter', () => {
   beforeAll(async () => {
     connection = await createConnection();
+    await connection.runMigrations();
   });
 
   it('should be able to create a new user with a return of 201 code status', async () => {
@@ -58,7 +59,9 @@ describe('SignUpRouter', () => {
   });
 
   afterAll(async () => {
-    await connection.dropDatabase();
-    await connection.close();
+    if (connection) {
+      await connection.dropDatabase();
+      await connection.close();
+    }
   });
 });

@@ -3,7 +3,7 @@
     "target": "es5",
     "module": "commonjs",
     "outDir": "./dist",
-    "rootDir": "./src",
+    "baseUrl": "./src",
     "paths": {
       "@infra/*": ["infra/*"],
       "@config/*": ["config/*"],
@@ -11,14 +11,13 @@
       "@providers/*": ["providers/*"],
       "@repositories/*": ["repositories/*"],
       "@services/*": ["services/*"],
+      "@validators/*": ["validators/*"]
     },
-    "strict": true,
-    "strictPropertyInitialization": false,
-    "baseUrl": "./src",
-    "allowJs": true,
     "esModuleInterop": true,
     "experimentalDecorators": true,
     "emitDecoratorMetadata": true,
-    "forceConsistentCasingInFileNames": true
+    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true,
+    "resolveJsonModule": true
   }
 }
